@@ -4,7 +4,7 @@ import './App.css';
 
 class App extends Component {
   render() {
-    var hellowWorld = "Welcome to React";
+    const hellowWorld = "Welcome to React";
     return (
       <div className="App">
         <h2>{hellowWorld}</h2>
