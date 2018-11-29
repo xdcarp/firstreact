@@ -20,12 +20,31 @@ const list = [
     objectID: 1
   }
 ];
+
 class App extends Component {
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      list: list,
+    };
+  }
+
   render() {
-    const hellowWorld = "Welcome to React jugando con HMR";
-    return (
+      return (
       <div className="App">
-        <h2>{hellowWorld}</h2>
+        {
+          this.state.list.map(item =>             
+              <div key={item.objectID}>
+                <span>
+                  <a href={item.url}>{item.title}</a>
+                </span>
+                <span>{item.author}</span>
+                <span>{item.num_comments}</span>
+                <span>{item.points}</span>
+              </div>
+          )}
       </div>
     );
   }
