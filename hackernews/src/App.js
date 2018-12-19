@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+const DEFAULT_QUERY = 'redux';
+
+const PATH_BASE = 'https://hn.algolia.com/api/vi';
+const PATH_SEARCH = '/search';
+const PARAM_SEARCH = 'query=';
+
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
+
 const list = [
   {
     title: 'React',
@@ -53,37 +61,91 @@ class App extends Component {
 
     const updatedList = this.state.list.filter(isNotId);
     this.setState({ list:updatedList });
-  }
+  }  
 
   render() {
     const { searchTerm, list} = this.state;  //destructuring
     return (
-      <div className="App">
-        <form>
-          <input type="text" onChange={this.onSearchChange}/>
-        </form>        
-        {
-          list.filter(isSearched(searchTerm)).map(item =>             
-              <div key={item.objectID}>
-                <span>
-                  <a href={item.url}>{item.title}</a>
-                </span>
-                <span>{item.author}</span>
-                <span>{item.num_comments}</span>
-                <span>{item.points}</span>
-                <span>
-                  <button
-                    onClick={ () => this.onDismiss(item.objectID)}
-                    type="button"
-                  >
-                    Dismiss
-                  </button>
-                </span>
-              </div>
-          )}
-      </div>
+      <div className="page">
+        <div className="interactions">
+          <Search
+            value = {searchTerm}
+            onChange = {this.onSearchChange}
+          >
+            Search 
+          </Search>
+        </div>
+          <Table 
+            list={list}
+            pattern={searchTerm}
+            onDismiss={this.onDismiss}
+          />        
+      </div>      
     );
   }
+}
+
+function Search({ value, onChange, children }) {
+  return(
+    <form>
+      {children}< input 
+        type="text" 
+        value={value} 
+        onChange={onChange} />
+    </form>
+  );  
+}
+
+function Table ({ list, pattern, onDismiss }){
+  const largeColumn = {
+    width: '40%',
+  };
+
+  const midColumn = {
+    width: '30%',
+  };
+
+  const smallColumn = {
+    width: '10%',
+  };
+
+  return(
+    <div className="table">
+      {
+        list.filter(isSearched(pattern))
+        .map( item =>             
+            <div key={item.objectID} className="table-row">
+              <span style={midColumn}>
+                <a href={item.url}>{item.title}</a>
+              </span>
+              <span style={{width: '30%'}}>{item.author}</span>
+              <span style={smallColumn}>{item.num_comments}</span>
+              <span style={smallColumn}>{item.points}</span>
+              <span style={midColumn}>
+                <Button onClick={ () => onDismiss(item.objectID)} className="button-inline">
+                  Dismiss
+                </Button>
+              </span>
+            </div>
+        )}
+    </div>
+  );  
+}
+
+function Button ({
+  onClick,
+  className = '',
+  children
+}){
+  return (
+    <button
+      onClick = {onClick}
+      className = {className}
+      type = "button"
+    >
+      {children}
+    </button>
+  );  
 }
 
 export default App;
